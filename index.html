@@ -1,0 +1,1461 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Catering Pal — Kitchen Equipment Rentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & TOKENS ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:#F26419; --or-dk:#C94D08; --or-lt:#FF8C55; --or-pale:#FFF4EE; --or-bd:rgba(242,100,25,.18);
+  --bk:#0F0F0F; --bk2:#1C1C1C; --wh:#FFFFFF; --off:#FAFAF9;
+  --g1:#111111; --g2:#3D3D3D; --g3:#6B6B6B; --g4:#9E9E9E; --g5:#D0D0D0; --g6:#EBEBEB; --g7:#F5F5F5;
+  --grn:#1A7A4A; --grn-pale:#F0FAF4; --grn-bd:rgba(26,122,74,.18);
+  --red:#C0392B; --red-pale:#FEF2F0; --red-bd:rgba(192,57,43,.18);
+  --blu:#1A56A7; --blu-pale:#EFF5FF; --blu-bd:rgba(26,86,167,.18);
+  --radius:10px; --radius-lg:16px; --radius-xl:22px;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.06); --shadow:0 4px 20px rgba(0,0,0,.08); --shadow-lg:0 12px 48px rgba(0,0,0,.12);
+  --transition:.18s ease;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--g1);min-height:100vh;-webkit-font-smoothing:antialiased}
+input,textarea,select,button{font-family:inherit}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:var(--g5);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--or)}
+
+/* ── TYPOGRAPHY ─────────────────────────────────── */
+.t-display{font-family:'Playfair Display',serif;font-weight:800;letter-spacing:-1.5px;line-height:1.05}
+.t-serif{font-family:'Playfair Display',serif;font-weight:700;letter-spacing:-.5px}
+.t-caps{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g4)}
+
+/* ── LAYOUT UTILITIES ───────────────────────────── */
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+.hidden{display:none!important}
+.flex{display:flex;align-items:center}
+.gap-8{gap:8px} .gap-12{gap:12px} .gap-16{gap:16px}
+
+/* ── VIEWS ──────────────────────────────────────── */
+.view{display:none;animation:fadeUp .3s ease both}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.94);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:80;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--g6);
+}
+.nav-inner{height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo-mark{width:34px;height:34px;border-radius:9px;background:var(--bk);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;color:var(--bk);letter-spacing:-.3px}
+.nav-logo-text span{color:var(--or)}
+.nav-links{display:flex;gap:2px}
+.nav-btn{border:none;background:none;font-size:13px;font-weight:500;color:var(--g3);padding:7px 12px;border-radius:8px;cursor:pointer;transition:all var(--transition);white-space:nowrap}
+.nav-btn:hover{color:var(--bk);background:var(--g7)}
+.nav-btn.active{color:var(--or);font-weight:600;background:var(--or-pale)}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-sep{width:1px;height:20px;background:var(--g6)}
+.btn-admin-nav{background:var(--bk);color:var(--wh);border:none;font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all var(--transition);letter-spacing:.02em}
+.btn-admin-nav:hover{background:var(--bk2);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{width:20px;height:1.5px;background:var(--bk);border-radius:2px;transition:all .3s}
+
+/* ── BUTTONS ─────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13.5px;font-weight:600;padding:10px 22px;border-radius:var(--radius);border:none;cursor:pointer;transition:all var(--transition);white-space:nowrap;text-decoration:none;line-height:1}
+.btn-primary{background:var(--or);color:var(--wh)}
+.btn-primary:hover{background:var(--or-dk);transform:translateY(-1px);box-shadow:0 6px 20px rgba(242,100,25,.28)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{background:var(--g5);color:var(--wh);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-outline{background:var(--wh);color:var(--g2);border:1.5px solid var(--g6)}
+.btn-outline:hover{border-color:var(--g4);color:var(--bk)}
+.btn-ghost{background:none;color:var(--g3);border:none;padding:8px 12px;font-size:13px;font-weight:500;cursor:pointer;transition:color var(--transition)}
+.btn-ghost:hover{color:var(--bk)}
+.btn-danger{background:var(--red-pale);color:var(--red);border:1px solid var(--red-bd)}
+.btn-danger:hover{background:var(--red);color:var(--wh)}
+.btn-success{background:var(--grn-pale);color:var(--grn);border:1px solid var(--grn-bd)}
+.btn-success:hover{background:var(--grn);color:var(--wh)}
+.btn-sm{font-size:12px;padding:7px 13px;border-radius:8px}
+.btn-lg{font-size:15px;padding:13px 28px;border-radius:var(--radius-lg)}
+.btn-full{width:100%}
+
+/* ── BADGE ───────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:40px;letter-spacing:.02em}
+.badge-orange{background:var(--or-pale);color:var(--or);border:1px solid var(--or-bd)}
+.badge-green{background:var(--grn-pale);color:var(--grn);border:1px solid var(--grn-bd)}
+.badge-red{background:var(--red-pale);color:var(--red);border:1px solid var(--red-bd)}
+.badge-blue{background:var(--blu-pale);color:var(--blu);border:1px solid var(--blu-bd)}
+.badge-gray{background:var(--g7);color:var(--g3);border:1px solid var(--g6)}
+
+/* ── CARD ────────────────────────────────────────── */
+.card{background:var(--wh);border:1.5px solid var(--g6);border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow-sm)}
+.card-hover{transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition)}
+.card-hover:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--g5)}
+
+/* ── FORM ────────────────────────────────────────── */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:12.5px;font-weight:600;color:var(--g2);margin-bottom:6px;display:block}
+.field-label .req{color:var(--or);margin-left:2px}
+.field-input{width:100%;border:1.5px solid var(--g6);border-radius:var(--radius);padding:10px 13px;font-size:13.5px;color:var(--bk);background:var(--wh);outline:none;transition:border-color var(--transition),box-shadow var(--transition)}
+.field-input:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(242,100,25,.1)}
+.field-input::placeholder{color:var(--g5)}
+.field-input.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-pale)}
+.field-hint{font-size:11px;color:var(--g4);margin-top:4px}
+.field-error{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+textarea.field-input{resize:vertical;min-height:76px}
+select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239E9E9E' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+
+
+/* ════════════════════════════════════════════════════
+   VIEW: BOOKING
+════════════════════════════════════════════════════ */
+#view-book .hero{
+  padding:52px 0 40px;
+  border-bottom:1px solid var(--g6);
+  margin-bottom:40px;
+}
+#view-book .hero h1{font-size:clamp(32px,5vw,52px);color:var(--bk);margin-bottom:10px}
+#view-book .hero h1 em{color:var(--or);font-style:italic}
+#view-book .hero p{font-size:15px;color:var(--g3);max-width:500px;line-height:1.75}
+
+/* Step wizard */
+.wizard{display:flex;align-items:center;margin-bottom:32px}
+.wz-step{display:flex;align-items:center;gap:9px;flex:1}
+.wz-num{width:28px;height:28px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+.wz-num.todo{background:var(--g6);color:var(--g4)}
+.wz-num.current{background:var(--or);color:var(--wh);box-shadow:0 0 0 4px var(--or-pale)}
+.wz-num.done{background:var(--bk);color:var(--wh)}
+.wz-label{font-size:12px;font-weight:600;color:var(--g4);transition:color .3s;white-space:nowrap}
+.wz-label.current{color:var(--or)}
+.wz-label.done{color:var(--bk)}
+.wz-line{flex:1;height:1.5px;background:var(--g6);margin:0 10px;border-radius:2px;transition:background .3s;min-width:20px}
+.wz-line.done{background:var(--bk)}
+
+/* Booking layout */
+.book-layout{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start}
+.book-main .card{margin-bottom:0}
+.step-panel{display:none;animation:fadeUp .25s ease both}
+.step-panel.active{display:block}
+.step-head{margin-bottom:22px}
+.step-head h2{font-size:19px;font-weight:700;color:var(--bk);margin-bottom:3px}
+.step-head p{font-size:13px;color:var(--g4)}
+
+/* Equipment grid */
+.equip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.equip-item{border:2px solid var(--g6);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all var(--transition);background:var(--wh);position:relative;user-select:none}
+.equip-item:hover{border-color:var(--or);background:var(--or-pale)}
+.equip-item.picked{border-color:var(--or);background:var(--or-pale)}
+.equip-item.picked::after{content:'✓';position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--or);color:var(--wh);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.equip-item.unavail{opacity:.4;cursor:not-allowed}
+.equip-item.unavail:hover{border-color:var(--g6);background:var(--wh)}
+.equip-em{font-size:30px;margin-bottom:10px}
+.equip-name{font-size:13px;font-weight:700;color:var(--bk);margin-bottom:2px;line-height:1.35}
+.equip-price{font-size:13px;font-weight:700;color:var(--or)}
+.equip-cat{font-size:10.5px;color:var(--g4);margin-top:2px}
+
+/* Calendar */
+.cal{border:1.5px solid var(--g6);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.cal-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--wh);border-bottom:1px solid var(--g6)}
+.cal-month{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--bk)}
+.cal-arrow{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--g6);background:var(--wh);cursor:pointer;font-size:13px;color:var(--g3);display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.cal-arrow:hover{border-color:var(--or);color:var(--or);background:var(--or-pale)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-dow{padding:8px 4px;text-align:center;font-size:10px;font-weight:700;color:var(--g4);background:var(--g7);border-bottom:1px solid var(--g6)}
+.cal-cell{padding:0;text-align:center;min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;cursor:pointer;border:1px solid transparent;transition:all .15s;font-size:13px}
+.cal-cell:hover:not(.cc-past):not(.cc-empty):not(.cc-full){background:var(--or-pale);color:var(--or);border-radius:8px}
+.cal-cell.cc-sel{background:var(--bk)!important;color:var(--wh)!important;border-radius:8px;font-weight:700}
+.cal-cell.cc-today{font-weight:700}
+.cal-cell.cc-today .cc-num{background:var(--or-pale);color:var(--or);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cal-cell.cc-sel .cc-num{background:none;color:var(--wh)}
+.cal-cell.cc-past{color:var(--g5);cursor:not-allowed}
+.cal-cell.cc-empty{cursor:default}
+.cal-cell.cc-full{background:#fff8f8;cursor:not-allowed}
+.cal-cell .cc-dot{width:4px;height:4px;border-radius:50%;background:var(--or);opacity:.5}
+.cal-cell.cc-full .cc-x{font-size:8px;color:var(--red);font-weight:700;display:block}
+.cc-x{display:none}
+
+/* Slots */
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:20px}
+.slot-btn{padding:9px 4px;border-radius:8px;border:1.5px solid var(--g6);background:var(--wh);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--transition);text-align:center;color:var(--g2)}
+.slot-btn:hover:not(.slot-taken){border-color:var(--or);color:var(--or);background:var(--or-pale)}
+.slot-btn.slot-sel{background:var(--or);color:var(--wh);border-color:var(--or);font-weight:700}
+.slot-btn.slot-taken{background:var(--g7);color:var(--g5);border-color:var(--g6);cursor:not-allowed;text-decoration:line-through;font-size:11px}
+
+/* Duration */
+.dur-row{display:flex;align-items:center;gap:14px;padding:14px;background:var(--g7);border-radius:var(--radius);border:1.5px solid var(--g6)}
+.dur-ctrl{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--g5);background:var(--wh);cursor:pointer;font-size:17px;font-weight:300;display:flex;align-items:center;justify-content:center;color:var(--g3);transition:all var(--transition);line-height:1}
+.dur-ctrl:hover{border-color:var(--or);color:var(--or)}
+.dur-display{font-size:15px;font-weight:700;color:var(--bk);min-width:60px;text-align:center}
+.dur-ret{font-size:12.5px;color:var(--g3);flex:1}
+
+/* Summary sidebar */
+.summary-card{position:sticky;top:78px}
+.summary-empty-state{text-align:center;padding:32px 16px}
+.summary-empty-state .big-em{font-size:40px;margin-bottom:8px}
+.sum-items{border-bottom:1px solid var(--g6);margin-bottom:14px;padding-bottom:14px}
+.sum-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.sum-item:last-child{margin-bottom:0}
+.sum-item-em{font-size:22px;flex-shrink:0;margin-top:1px}
+.sum-item-name{font-size:13px;font-weight:600;color:var(--bk)}
+.sum-item-sub{font-size:11.5px;color:var(--g4);margin-top:1px}
+.sum-item-price{font-size:13px;font-weight:700;color:var(--or);margin-left:auto;flex-shrink:0}
+.sum-meta{background:var(--g7);border-radius:var(--radius);padding:12px;margin-bottom:14px;font-size:12.5px;line-height:1.85;color:var(--g2)}
+.sum-totals .row{display:flex;justify-content:space-between;font-size:13px;color:var(--g3);margin-bottom:5px}
+.sum-totals .grand{font-size:16px;font-weight:800;color:var(--bk);border-top:1.5px solid var(--g6);padding-top:10px;margin-top:8px;font-family:'Playfair Display',serif}
+
+/* Step nav buttons */
+.step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:12px}
+.step-nav-right{display:flex;gap:10px;margin-left:auto}
+
+
+/* ════════════════════════════════════════════════════
+   VIEW: CONFIRMATION
+════════════════════════════════════════════════════ */
+#view-confirm{padding:56px 0 80px;text-align:center}
+.confirm-wrap{max-width:540px;margin:0 auto;padding:0 24px}
+.confirm-checkmark{width:72px;height:72px;border-radius:50%;background:var(--grn-pale);border:2px solid var(--grn-bd);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+.confirm-title{font-size:clamp(26px,4vw,38px);color:var(--bk);margin-bottom:8px}
+.confirm-sub{font-size:15px;color:var(--g3);line-height:1.7;margin-bottom:26px}
+.confirm-ref{font-family:monospace;font-size:15px;font-weight:700;color:var(--or);background:var(--or-pale);border:1.5px solid var(--or-bd);padding:9px 22px;border-radius:var(--radius);display:inline-block;margin-bottom:24px;letter-spacing:.06em}
+.confirm-details{background:var(--g7);border-radius:var(--radius-lg);padding:20px;margin-bottom:22px;text-align:left}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;font-size:13.5px;gap:12px;margin-bottom:9px}
+.confirm-row:last-child{margin-bottom:0;font-weight:700;font-size:15px;border-top:1.5px solid var(--g6);padding-top:10px;margin-top:8px}
+.confirm-key{color:var(--g4)}
+.confirm-val{font-weight:600;color:var(--bk);text-align:right}
+.reminder-callout{display:flex;gap:12px;align-items:flex-start;background:var(--blu-pale);border:1.5px solid var(--blu-bd);border-radius:var(--radius-lg);padding:16px;margin-bottom:24px;text-align:left}
+.reminder-callout-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.reminder-callout-text{font-size:13px;color:var(--blu);line-height:1.65}
+.confirm-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+
+/* ════════════════════════════════════════════════════
+   VIEW: MY BOOKINGS
+════════════════════════════════════════════════════ */
+#view-mybookings{padding:44px 0 80px}
+.lookup-card{max-width:520px;margin:0 auto 32px}
+.lookup-row{display:flex;gap:10px}
+.booking-card{margin-bottom:14px}
+.bc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.bc-items{font-size:15px;font-weight:700;color:var(--bk);margin-bottom:5px;font-family:'Playfair Display',serif}
+.bc-meta{font-size:13px;color:var(--g4);line-height:1.85}
+.bc-right{text-align:right;flex-shrink:0}
+.bc-price{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--or)}
+.bc-ref{font-family:monospace;font-size:11px;color:var(--g4);background:var(--g7);padding:2px 8px;border-radius:5px;display:inline-block;margin-top:4px}
+
+
+/* ════════════════════════════════════════════════════
+   VIEW: ADMIN
+════════════════════════════════════════════════════ */
+#view-admin{padding:40px 0 80px}
+
+/* Login gate */
+.admin-login{max-width:380px;margin:60px auto 0;padding:0 24px}
+.admin-login-icon{font-size:44px;margin-bottom:14px}
+.admin-login h2{font-size:24px;margin-bottom:4px}
+
+/* Dashboard */
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.admin-topbar h1{font-size:26px;font-weight:800;color:var(--bk);font-family:'Playfair Display',serif}
+.admin-topbar-right{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-tile{background:var(--wh);border:1.5px solid var(--g6);border-radius:var(--radius-xl);padding:20px;transition:box-shadow var(--transition)}
+.stat-tile:hover{box-shadow:var(--shadow)}
+.stat-icon{font-size:22px;margin-bottom:8px}
+.stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:11.5px;color:var(--g4)}
+.stat-orange .stat-num{color:var(--or)}
+.stat-green .stat-num{color:var(--grn)}
+.stat-blue .stat-num{color:var(--blu)}
+
+/* Reminders panel */
+.reminder-panel{background:var(--wh);border:1.5px solid var(--g6);border-radius:var(--radius-xl);padding:20px;margin-bottom:24px}
+.reminder-panel-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.rp-title{font-size:14px;font-weight:700;color:var(--bk)}
+.rp-sub{font-size:12px;color:var(--g4);margin-top:1px}
+.reminder-row{display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--g7);border-radius:var(--radius);margin-bottom:8px;font-size:13px;transition:background var(--transition)}
+.reminder-row:last-child{margin-bottom:0}
+.reminder-row:hover{background:var(--blu-pale)}
+.rr-icon{font-size:18px;flex-shrink:0}
+.rr-body{flex:1;line-height:1.6}
+.rr-time{font-size:11px;color:var(--g4);text-align:right;flex-shrink:0}
+.rr-sent-badge{font-size:10px;font-weight:700;color:var(--grn);background:var(--grn-pale);padding:2px 7px;border-radius:40px;flex-shrink:0}
+
+/* Table */
+.table-card{background:var(--wh);border:1.5px solid var(--g6);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:24px}
+.table-toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--g6);flex-wrap:wrap}
+.filter-pill{font-size:12px;font-weight:600;padding:6px 14px;border-radius:40px;border:1.5px solid var(--g6);background:var(--wh);color:var(--g4);cursor:pointer;transition:all var(--transition)}
+.filter-pill:hover{border-color:var(--g4);color:var(--bk)}
+.filter-pill.active{background:var(--bk);color:var(--wh);border-color:var(--bk)}
+.search-input-wrap{flex:1;min-width:160px;max-width:260px;position:relative}
+.search-input-wrap::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--g4);pointer-events:none}
+.search-input{width:100%;border:1.5px solid var(--g6);border-radius:var(--radius);padding:7px 12px 7px 32px;font-size:13px;outline:none;transition:border-color var(--transition)}
+.search-input:focus{border-color:var(--or)}
+.tbl-head{display:grid;grid-template-columns:2fr 1.5fr 1.2fr 0.8fr 1fr 110px;gap:10px;padding:10px 20px;background:var(--g7);font-size:10.5px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em}
+.tbl-row{display:grid;grid-template-columns:2fr 1.5fr 1.2fr 0.8fr 1fr 110px;gap:10px;padding:14px 20px;border-top:1px solid var(--g6);align-items:center;transition:background var(--transition);cursor:pointer}
+.tbl-row:hover{background:var(--g7)}
+.tbl-cell{font-size:13px;color:var(--bk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl-sub{font-size:11px;color:var(--g4);margin-top:2px}
+.tbl-actions{display:flex;gap:5px;flex-wrap:wrap}
+.no-rows{padding:52px 20px;text-align:center;color:var(--g4);font-size:14px}
+
+/* Detail modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.48);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--wh);border-radius:var(--radius-xl);width:100%;max-width:490px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 0}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--bk)}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--g7);border:none;cursor:pointer;font-size:16px;color:var(--g3);display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.modal-close:hover{background:var(--or-pale);color:var(--or)}
+.modal-body{padding:16px 22px 22px}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--g7);font-size:13.5px;gap:14px}
+.detail-row:last-child{border-bottom:none}
+.detail-key{color:var(--g4);flex-shrink:0;font-weight:500}
+.detail-val{font-weight:600;color:var(--bk);text-align:right}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1.5px solid var(--g6)}
+
+/* Mobile menu overlay */
+.mob-overlay{display:none;position:fixed;inset:0;background:var(--wh);z-index:150;flex-direction:column;padding:24px}
+.mob-overlay.open{display:flex}
+.mob-close{align-self:flex-end;font-size:26px;background:none;border:none;cursor:pointer;color:var(--g3);margin-bottom:20px;padding:4px}
+.mob-link{font-size:16px;font-weight:600;color:var(--bk);padding:14px 0;border-bottom:1px solid var(--g6);cursor:pointer;transition:color var(--transition)}
+.mob-link:hover{color:var(--or)}
+
+/* Toast */
+.toast-shelf{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.toast{background:var(--bk);color:var(--wh);padding:11px 22px;border-radius:var(--radius);font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;animation:fadeUp .28s ease;white-space:nowrap}
+.toast-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.toast-ok .toast-dot{background:var(--grn)}
+.toast-err .toast-dot{background:var(--red)}
+.toast-info .toast-dot{background:var(--or)}
+.toast-out{animation:fadeUp .28s ease reverse}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:960px){
+  .book-layout{grid-template-columns:1fr}
+  .summary-card{position:static}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .tbl-head,.tbl-row{grid-template-columns:2fr 1.2fr 1fr 100px}
+  .tbl-head>*:nth-child(3),.tbl-row>*:nth-child(3),
+  .tbl-head>*:nth-child(4),.tbl-row>*:nth-child(4){display:none}
+}
+@media(max-width:640px){
+  .nav-links,.nav-sep,.btn-admin-nav{display:none}
+  .hamburger{display:flex}
+  .container{padding:0 16px}
+  .equip-grid{grid-template-columns:repeat(2,1fr)}
+  .slots-grid{grid-template-columns:repeat(3,1fr)}
+  .field-row{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .tbl-head,.tbl-row{grid-template-columns:2fr 1fr 95px}
+  .tbl-head>*:nth-child(2),.tbl-row>*:nth-child(2),
+  .tbl-head>*:nth-child(3),.tbl-row>*:nth-child(3),
+  .tbl-head>*:nth-child(4),.tbl-row>*:nth-child(4){display:none}
+  .wizard .wz-label{display:none}
+  #view-book .hero{padding:30px 0 24px}
+  .confirm-btns{flex-direction:column}
+}
+@media(max-width:400px){
+  .slots-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ────────────────────────────────────── -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-logo" onclick="showView('book')">
+        <div class="nav-logo-mark">🍳</div>
+        <span class="nav-logo-text">Catering<span>Pal</span></span>
+      </a>
+      <div class="nav-links">
+        <button class="nav-btn active" id="nb-book" onclick="showView('book')">Book a Rental</button>
+        <button class="nav-btn" id="nb-mybookings" onclick="showView('mybookings')">My Bookings</button>
+        <button class="nav-btn" id="nb-admin" onclick="showView('admin')">⚙ Admin</button>
+      </div>
+      <div class="nav-right">
+        <button class="hamburger" id="hamburgerBtn" onclick="openMob()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile nav overlay -->
+<div class="mob-overlay" id="mobMenu">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <div class="mob-link" onclick="showView('book');closeMob()">🔧 Book a Rental</div>
+  <div class="mob-link" onclick="showView('mybookings');closeMob()">📋 My Bookings</div>
+  <div class="mob-link" onclick="showView('admin');closeMob()">⚙ Admin Dashboard</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     VIEW: BOOK
+════════════════════════════════════════════════ -->
+<div class="view active" id="view-book">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="t-caps" style="margin-bottom:10px">✦ Premium Equipment Rentals</div>
+      <h1 class="t-display">Book Your <em>Kitchen Rental</em></h1>
+      <p>Select equipment, pick a date, and complete your booking in minutes.</p>
+    </div>
+
+    <!-- Wizard steps -->
+    <div class="wizard" id="wizard">
+      <div class="wz-step">
+        <div class="wz-num current" id="wn1">1</div>
+        <span class="wz-label current" id="wl1">Choose Items</span>
+      </div>
+      <div class="wz-line" id="wline12"></div>
+      <div class="wz-step">
+        <div class="wz-num todo" id="wn2">2</div>
+        <span class="wz-label" id="wl2">Date & Time</span>
+      </div>
+      <div class="wz-line" id="wline23"></div>
+      <div class="wz-step">
+        <div class="wz-num todo" id="wn3">3</div>
+        <span class="wz-label" id="wl3">Your Details</span>
+      </div>
+      <div class="wz-line" id="wline34"></div>
+      <div class="wz-step">
+        <div class="wz-num todo" id="wn4">4</div>
+        <span class="wz-label" id="wl4">Review</span>
+      </div>
+    </div>
+
+    <div class="book-layout">
+      <!-- Main column -->
+      <div class="book-main">
+
+        <!-- STEP 1: Items -->
+        <div class="card step-panel active" id="panel1">
+          <div class="step-head">
+            <h2>1. Choose Equipment</h2>
+            <p>Select one or more items to rent</p>
+          </div>
+          <div class="equip-grid" id="equipGrid"></div>
+          <div class="step-nav">
+            <div></div>
+            <div class="step-nav-right">
+              <button class="btn btn-primary" id="s1next" onclick="toStep(2)" disabled>
+                Next: Date & Time →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Date & Time -->
+        <div class="card step-panel" id="panel2">
+          <div class="step-head">
+            <h2>2. Pick Date & Time</h2>
+            <p>Choose your rental start date and pickup slot</p>
+          </div>
+
+          <div class="cal" id="calEl">
+            <div class="cal-top">
+              <button class="cal-arrow" onclick="calNav(-1)">‹</button>
+              <span class="cal-month" id="calMonthLbl"></span>
+              <button class="cal-arrow" onclick="calNav(1)">›</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+
+          <div id="slotsSection" class="hidden">
+            <div class="t-caps" style="margin-bottom:10px">Pickup Time</div>
+            <div class="slots-grid" id="slotsGrid"></div>
+          </div>
+
+          <div id="durSection" class="hidden">
+            <div class="t-caps" style="margin-bottom:10px">Rental Duration</div>
+            <div class="dur-row">
+              <button class="dur-ctrl" onclick="adjDur(-1)">−</button>
+              <span class="dur-display" id="durDisplay">1 day</span>
+              <button class="dur-ctrl" onclick="adjDur(1)">+</button>
+              <span class="dur-ret" id="durRet">Return: —</span>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn btn-outline" onclick="toStep(1)">← Back</button>
+            <div class="step-nav-right">
+              <button class="btn btn-primary" id="s2next" onclick="toStep(3)" disabled>
+                Next: Your Details →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Client Details -->
+        <div class="card step-panel" id="panel3">
+          <div class="step-head">
+            <h2>3. Your Details</h2>
+            <p>We'll send a confirmation and a 24-hour reminder to your email</p>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">First Name<span class="req">*</span></label>
+              <input class="field-input" id="f_fname" placeholder="Sarah" type="text"/>
+              <div class="field-error" id="fe_fname">Please enter your first name</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Last Name<span class="req">*</span></label>
+              <input class="field-input" id="f_lname" placeholder="Johnson" type="text"/>
+              <div class="field-error" id="fe_lname">Please enter your last name</div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Email Address<span class="req">*</span></label>
+            <input class="field-input" id="f_email" placeholder="sarah@example.com" type="email"/>
+            <div class="field-error" id="fe_email">Please enter a valid email</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Phone Number</label>
+            <input class="field-input" id="f_phone" placeholder="+1 555 000 0000" type="tel"/>
+          </div>
+          <div class="field">
+            <label class="field-label">Delivery Address<span class="req">*</span></label>
+            <input class="field-input" id="f_address" placeholder="123 Main Street, City, State" type="text"/>
+            <div class="field-error" id="fe_address">Please enter a delivery address</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Special Notes</label>
+            <textarea class="field-input" id="f_notes" placeholder="Any special requests or delivery instructions…"></textarea>
+          </div>
+          <div class="step-nav">
+            <button class="btn btn-outline" onclick="toStep(2)">← Back</button>
+            <div class="step-nav-right">
+              <button class="btn btn-primary" onclick="toStep(4)">Review Booking →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Review & Confirm -->
+        <div class="card step-panel" id="panel4">
+          <div class="step-head">
+            <h2>4. Review & Confirm</h2>
+            <p>Check everything before confirming your booking</p>
+          </div>
+          <div id="reviewBlock"></div>
+          <div class="step-nav">
+            <button class="btn btn-outline" onclick="toStep(3)">← Back</button>
+            <div class="step-nav-right">
+              <button class="btn btn-primary btn-lg" id="submitBtn" onclick="submitBooking()">
+                ✓ Confirm Booking
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary sidebar -->
+      <div>
+        <div class="card summary-card" id="summarySidebar">
+          <div class="t-caps" style="margin-bottom:12px">Booking Summary</div>
+          <div id="summaryInner">
+            <div class="summary-empty-state">
+              <div class="big-em">🛒</div>
+              <div style="font-size:13px;color:var(--g4)">Select items to see your summary</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     VIEW: CONFIRMATION
+════════════════════════════════════════════════ -->
+<div class="view" id="view-confirm">
+  <div class="container">
+    <div class="confirm-wrap">
+      <div class="confirm-checkmark">✓</div>
+      <h1 class="t-display confirm-title">Booking Confirmed!</h1>
+      <p class="confirm-sub" id="confSub">Your rental is all set.</p>
+      <div class="confirm-ref" id="confRef">KL-XXXXXX</div>
+      <div class="confirm-details" id="confDetails"></div>
+      <div class="reminder-callout">
+        <div class="reminder-callout-icon">📧</div>
+        <div class="reminder-callout-text">
+          <strong>Confirmation saved.</strong> Your booking details have been stored.<br>
+          A <strong>24-hour reminder</strong> is scheduled before your pickup time.
+        </div>
+      </div>
+      <div class="confirm-btns">
+        <button class="btn btn-primary btn-lg" onclick="showView('mybookings')">📋 My Bookings</button>
+        <button class="btn btn-outline btn-lg" onclick="freshBooking()">+ Book Another</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     VIEW: MY BOOKINGS
+════════════════════════════════════════════════ -->
+<div class="view" id="view-mybookings">
+  <div class="container">
+    <div style="padding:44px 0 28px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px">
+      <div>
+        <div class="t-caps" style="margin-bottom:6px">Your Rentals</div>
+        <h1 class="t-display" style="font-size:clamp(26px,4vw,40px)">My Bookings</h1>
+      </div>
+      <button class="btn btn-primary" onclick="showView('book')">+ New Booking</button>
+    </div>
+    <div class="card lookup-card">
+      <p style="font-size:13px;color:var(--g4);margin-bottom:12px">Enter your email to retrieve your bookings</p>
+      <div class="lookup-row">
+        <input class="field-input" id="lookupEmail" placeholder="your@email.com" style="flex:1" type="email"
+          onkeydown="if(event.key==='Enter')lookupBookings()"/>
+        <button class="btn btn-primary" onclick="lookupBookings()">Find</button>
+      </div>
+    </div>
+    <div id="myBookingsList"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     VIEW: ADMIN
+════════════════════════════════════════════════ -->
+<div class="view" id="view-admin">
+  <div class="container">
+
+    <!-- Login gate -->
+    <div id="adminGate" style="padding:60px 0">
+      <div class="admin-login">
+        <div class="admin-login-icon">🔐</div>
+        <h2 class="t-display">Admin Access</h2>
+        <p style="font-size:13px;color:var(--g4);margin:6px 0 20px">Enter the admin password to continue</p>
+        <div class="field">
+          <label class="field-label">Password</label>
+          <input class="field-input" id="adminPwInput" type="password" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+          <div class="field-hint">Default: <code style="background:var(--g7);padding:1px 6px;border-radius:4px">admin123</code></div>
+          <div class="field-error" id="adminPwErr">Incorrect password. Try again.</div>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="doAdminLogin()">Sign In →</button>
+      </div>
+    </div>
+
+    <!-- Dashboard (hidden until login) -->
+    <div id="adminDash" class="hidden" style="padding-top:8px">
+      <div class="admin-topbar">
+        <div>
+          <h1>Admin Dashboard</h1>
+          <div class="t-caps" id="adminDateLbl" style="margin-top:4px"></div>
+        </div>
+        <div class="admin-topbar-right">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="doAdminLogout()">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow"></div>
+
+      <!-- Reminders -->
+      <div class="reminder-panel">
+        <div class="reminder-panel-head">
+          <div>
+            <div class="rp-title">📨 Upcoming Reminders</div>
+            <div class="rp-sub">Automated 24-hour reminders for upcoming bookings</div>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="sendAllPending()">Send Pending Now</button>
+        </div>
+        <div id="reminderRows"></div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-toolbar">
+          <button class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</button>
+          <button class="filter-pill" data-filter="confirmed" onclick="setFilter('confirmed',this)">Confirmed</button>
+          <button class="filter-pill" data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
+          <button class="filter-pill" data-filter="cancelled" onclick="setFilter('cancelled',this)">Cancelled</button>
+          <div class="search-input-wrap" style="margin-left:auto">
+            <input class="search-input" id="adminSearch" placeholder="Search…" oninput="renderTable()"/>
+          </div>
+        </div>
+        <div class="tbl-head">
+          <div>Client</div>
+          <div>Items</div>
+          <div>Date</div>
+          <div>Total</div>
+          <div>Status</div>
+          <div>Actions</div>
+        </div>
+        <div id="adminTbody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Detail Modal -->
+<div class="modal-bg" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">Booking Details</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast shelf -->
+<div class="toast-shelf" id="toastShelf"></div>
+
+
+<!-- ════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── DATA ─────────────────────────────────────────── */
+const EQUIPMENT = [
+  {id:1, name:'KitchenAid Stand Mixer',  emoji:'🍰', price:18, cat:'Baking',   avail:true},
+  {id:2, name:'Cast Iron Dutch Oven',    emoji:'🍲', price:12, cat:'Cooking',  avail:true},
+  {id:3, name:'Pasta Maker Set',         emoji:'🍝', price:8,  cat:'Baking',   avail:true},
+  {id:4, name:'Copper Sauté Pan Set',    emoji:'🥘', price:22, cat:'Cooking',  avail:true},
+  {id:5, name:'Bundt Pan Collection',    emoji:'🎂', price:5,  cat:'Baking',   avail:true},
+  {id:6, name:'Immersion Blender Pro',   emoji:'🥤', price:7,  cat:'Cooking',  avail:true},
+  {id:7, name:'Bread Proofing Baskets',  emoji:'🍞', price:4,  cat:'Baking',   avail:true},
+  {id:8, name:'Sous Vide Precision Cooker', emoji:'🌡️', price:14, cat:'Cooking', avail:true},
+];
+
+const SLOTS = [
+  '8:00 AM','9:00 AM','10:00 AM','11:00 AM',
+  '12:00 PM','1:00 PM','2:00 PM','3:00 PM',
+  '4:00 PM','5:00 PM','6:00 PM'
+];
+
+const ADMIN_PASS = 'admin123';
+const DELIVERY_FEE = 4.99;
+
+/* ── STORE ────────────────────────────────────────── */
+let DB = {bookings:[], reminders:[]};
+(function loadDB(){
+  try { const s = localStorage.getItem('cp_mvp_v1'); if(s) DB = JSON.parse(s); } catch(e){}
+})();
+function saveDB(){ try{ localStorage.setItem('cp_mvp_v1', JSON.stringify(DB)); }catch(e){} }
+
+/* ── BOOKING STATE ───────────────────────────────── */
+let BS = {};
+function resetBS(){
+  const n = new Date();
+  BS = {
+    step: 1,
+    picked: [],        // equipment ids
+    date: null,        // 'YYYY-MM-DD'
+    slot: null,
+    days: 1,
+    calY: n.getFullYear(), calM: n.getMonth(),
+    client: {}
+  };
+}
+resetBS();
+
+/* ── VIEW ROUTING ────────────────────────────────── */
+let adminAuthed = false;
+let currentView = 'book';
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb = document.getElementById('nb-'+name);
+  if(nb) nb.classList.add('active');
+  currentView = name;
+  window.scrollTo(0,0);
+  if(name === 'admin') initAdmin();
+  if(name === 'mybookings') renderMyBookings();
+}
+
+function openMob(){ document.getElementById('mobMenu').classList.add('open'); }
+function closeMob(){ document.getElementById('mobMenu').classList.remove('open'); }
+
+/* ── STEP WIZARD ─────────────────────────────────── */
+function toStep(n){
+  // Guards
+  if(n===2 && BS.picked.length===0){ toast('Select at least one item','err'); return; }
+  if(n===3 && (!BS.date||!BS.slot)){ toast('Choose a date and time slot','err'); return; }
+  if(n===4){
+    const errs = validateForm();
+    if(errs.length){ errs.forEach(showErr); toast('Fill in all required fields','err'); return; }
+    clearErrors(); captureForm(); buildReview();
+  }
+  BS.step = n;
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('panel'+i).classList.toggle('active', i===n);
+  });
+  updateWizard(n);
+  updateSidebar();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateWizard(cur){
+  for(let i=1;i<=4;i++){
+    const num = document.getElementById('wn'+i);
+    const lbl = document.getElementById('wl'+i);
+    if(i<cur){
+      num.className='wz-num done'; num.textContent='✓';
+      lbl.className='wz-label done';
+    } else if(i===cur){
+      num.className='wz-num current'; num.textContent=i;
+      lbl.className='wz-label current';
+    } else {
+      num.className='wz-num todo'; num.textContent=i;
+      lbl.className='wz-label';
+    }
+    if(i<4){
+      const line = document.getElementById('wline'+i+(i+1));
+      if(line) line.className='wz-line'+(i<cur?' done':'');
+    }
+  }
+}
+
+/* ── EQUIPMENT ───────────────────────────────────── */
+function renderEquipment(){
+  document.getElementById('equipGrid').innerHTML = EQUIPMENT.map(e=>`
+    <div class="equip-item${!e.avail?' unavail':''}" id="eq${e.id}" onclick="${e.avail?`toggleEquip(${e.id})`:''}">
+      <div class="equip-em">${e.emoji}</div>
+      <div class="equip-name">${e.name}</div>
+      <div class="equip-price">GH₵${e.price}/day</div>
+      <div class="equip-cat">${e.cat}${!e.avail?' · Unavailable':''}</div>
+    </div>`).join('');
+}
+
+function toggleEquip(id){
+  const i = BS.picked.indexOf(id);
+  if(i>=0) BS.picked.splice(i,1); else BS.picked.push(id);
+  EQUIPMENT.forEach(e=>{
+    const el = document.getElementById('eq'+e.id);
+    if(el) el.classList.toggle('picked', BS.picked.includes(e.id));
+  });
+  document.getElementById('s1next').disabled = BS.picked.length===0;
+  updateSidebar();
+}
+
+/* ── CALENDAR ────────────────────────────────────── */
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function renderCal(){
+  document.getElementById('calMonthLbl').textContent = `${MONTHS[BS.calM]} ${BS.calY}`;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDow = new Date(BS.calY, BS.calM, 1).getDay();
+  const totalDays = new Date(BS.calY, BS.calM+1, 0).getDate();
+
+  let html = DAYS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<firstDow;i++) html+=`<div class="cal-cell cc-empty"></div>`;
+
+  for(let d=1;d<=totalDays;d++){
+    const dt = new Date(BS.calY, BS.calM, d);
+    const ds = fmtISO(BS.calY, BS.calM+1, d);
+    const past = dt < today;
+    const isToday = dt.toDateString()===today.toDateString();
+    const takenSlots = getTaken(ds);
+    const full = !past && takenSlots.length >= SLOTS.length;
+    const partial = !past && takenSlots.length > 0 && !full;
+    const sel = ds === BS.date;
+
+    let cls = 'cal-cell';
+    if(past) cls+=' cc-past';
+    else if(full) cls+=' cc-full';
+    else if(partial) cls+=' cc-partial';
+    if(isToday && !sel) cls+=' cc-today';
+    if(sel) cls+=' cc-sel';
+
+    const clickable = !past && !full;
+    const cellClick = clickable ? ('onclick="pickDate(\'' + ds + '\')"') : (full ? 'title="Fully booked"' : '');
+    const dotHtml = partial ? '<div class="cc-dot"></div>' : '';
+    const xHtml = full ? '<span class="cc-x">FULL</span>' : '';
+    html += '<div class="'+cls+'" '+cellClick+'><span class="cc-num">'+d+'</span>'+dotHtml+xHtml+'</div>';
+  }
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+function calNav(dir){
+  BS.calM += dir;
+  if(BS.calM<0){BS.calM=11;BS.calY--;}
+  else if(BS.calM>11){BS.calM=0;BS.calY++;}
+  renderCal();
+}
+
+function pickDate(ds){
+  BS.date = ds; BS.slot = null;
+  renderCal();
+  renderSlots();
+  document.getElementById('slotsSection').classList.remove('hidden');
+  document.getElementById('durSection').classList.remove('hidden');
+  refreshDurLabel();
+  document.getElementById('s2next').disabled = true;
+  updateSidebar();
+}
+
+/* ── SLOTS ───────────────────────────────────────── */
+function getTaken(ds){
+  return DB.bookings
+    .filter(b => b.status!=='cancelled' && b.date===ds)
+    .map(b => b.slot);
+}
+
+function renderSlots(){
+  if(!BS.date){ document.getElementById('slotsGrid').innerHTML=''; return; }
+  const taken = getTaken(BS.date);
+  document.getElementById('slotsGrid').innerHTML = SLOTS.map(s=>{
+    const tk = taken.includes(s);
+    const sel = s===BS.slot && !tk;
+    let cls = 'slot-btn';
+    if(tk) cls+=' slot-taken';
+    else if(sel) cls+=' slot-sel';
+    return `<button class="${cls}" ${tk?'disabled':''} onclick="pickSlot('${s}')">${tk?'✕':''} ${s}</button>`;
+  }).join('');
+}
+
+function pickSlot(s){
+  BS.slot = s;
+  renderSlots();
+  document.getElementById('s2next').disabled = false;
+  updateSidebar();
+}
+
+/* ── DURATION ────────────────────────────────────── */
+function adjDur(dir){
+  BS.days = Math.max(1, BS.days+dir);
+  refreshDurLabel();
+  updateSidebar();
+}
+function refreshDurLabel(){
+  document.getElementById('durDisplay').textContent = BS.days+(BS.days===1?' day':' days');
+  if(BS.date){
+    const [y,m,d] = BS.date.split('-').map(Number);
+    const ret = new Date(y,m-1,d+BS.days);
+    document.getElementById('durRet').textContent = 'Return: '+ret.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+}
+
+/* ── SIDEBAR SUMMARY ─────────────────────────────── */
+function updateSidebar(){
+  const el = document.getElementById('summaryInner');
+  if(!BS.picked.length){
+    el.innerHTML=`<div class="summary-empty-state"><div class="big-em">🛒</div><div style="font-size:13px;color:var(--g4)">Select items to see your summary</div></div>`;
+    return;
+  }
+  const chosen = BS.picked.map(id=>EQUIPMENT.find(e=>e.id===id));
+  const sub = chosen.reduce((s,e)=>s+e.price*BS.days, 0);
+  const total = sub + DELIVERY_FEE;
+
+  let html = `<div class="sum-items">`;
+  html += chosen.map(e=>`
+    <div class="sum-item">
+      <span class="sum-item-em">${e.emoji}</span>
+      <div>
+        <div class="sum-item-name">${e.name}</div>
+        <div class="sum-item-sub">GH₵${e.price}/day × ${BS.days} day${BS.days>1?'s':''}</div>
+      </div>
+      <span class="sum-item-price">GH₵${(e.price*BS.days).toFixed(2)}</span>
+    </div>`).join('');
+  html += `</div>`;
+
+  if(BS.date){
+    html += `<div class="sum-meta">
+      📅 <strong>${fmtDate(BS.date)}</strong><br>
+      ${BS.slot?`🕐 <strong>${BS.slot}</strong>`:`<span style="color:var(--or)">⚠ No time selected yet</span>`}
+    </div>`;
+  }
+
+  html += `<div class="sum-totals">
+    <div class="row"><span>Subtotal</span><span>GH₵${sub.toFixed(2)}</span></div>
+    <div class="row"><span>Delivery</span><span>GH₵${DELIVERY_FEE.toFixed(2)}</span></div>
+    <div class="row grand">
+      <span>Total</span>
+      <span style="color:var(--or)">GH₵${total.toFixed(2)}</span>
+    </div>
+  </div>`;
+  el.innerHTML = html;
+}
+
+/* ── FORM VALIDATION ─────────────────────────────── */
+function validateForm(){
+  const errs = [];
+  if(!val('f_fname')) errs.push('fname');
+  if(!val('f_lname')) errs.push('lname');
+  const em = val('f_email');
+  if(!em || !em.includes('@') || !em.includes('.')) errs.push('email');
+  if(!val('f_address')) errs.push('address');
+  return errs;
+}
+function val(id){ return document.getElementById(id).value.trim(); }
+function showErr(f){
+  document.getElementById('f_'+f).classList.add('error');
+  document.getElementById('fe_'+f).classList.add('show');
+}
+function clearErrors(){
+  ['fname','lname','email','address'].forEach(f=>{
+    document.getElementById('f_'+f).classList.remove('error');
+    document.getElementById('fe_'+f).classList.remove('show');
+  });
+}
+function captureForm(){
+  BS.client = {
+    firstName: val('f_fname'),
+    lastName:  val('f_lname'),
+    email:     val('f_email'),
+    phone:     val('f_phone'),
+    address:   val('f_address'),
+    notes:     val('f_notes'),
+  };
+}
+
+/* ── REVIEW ──────────────────────────────────────── */
+function buildReview(){
+  const chosen = BS.picked.map(id=>EQUIPMENT.find(e=>e.id===id));
+  const sub = chosen.reduce((s,e)=>s+e.price*BS.days,0);
+  const total = sub+DELIVERY_FEE;
+
+  document.getElementById('reviewBlock').innerHTML = `
+    <div style="background:var(--g7);border-radius:var(--radius-lg);padding:18px;margin-bottom:16px">
+      <div class="t-caps" style="margin-bottom:12px">Items</div>
+      ${chosen.map(e=>'<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px"><span style="font-size:20px">'+e.emoji+'</span><span style="font-size:14px;font-weight:600;flex:1">'+e.name+'</span><span style="font-size:13px;font-weight:700;color:var(--or)">GH₵'+(e.price*BS.days).toFixed(2)+'</span></div>').join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="background:var(--or-pale);border:1px solid var(--or-bd);border-radius:var(--radius);padding:14px">
+        <div class="t-caps" style="margin-bottom:8px;color:var(--or)">Date & Time</div>
+        <div style="font-size:14px;font-weight:700;color:var(--bk)">${fmtDate(BS.date)}</div>
+        <div style="font-size:12.5px;color:var(--g3);margin-top:2px">Pickup: ${BS.slot}</div>
+        <div style="font-size:12.5px;color:var(--g3)">${BS.days} day${BS.days>1?'s':''} rental</div>
+      </div>
+      <div style="background:var(--g7);border:1px solid var(--g6);border-radius:var(--radius);padding:14px">
+        <div class="t-caps" style="margin-bottom:8px">Client</div>
+        <div style="font-size:14px;font-weight:700;color:var(--bk)">${BS.client.firstName} ${BS.client.lastName}</div>
+        <div style="font-size:12.5px;color:var(--g3);margin-top:2px">${BS.client.email}</div>
+        <div style="font-size:12.5px;color:var(--g3)">${BS.client.address}</div>
+      </div>
+    </div>
+    <div style="padding:0 4px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--g4);margin-bottom:5px"><span>Subtotal</span><span>GH₵${sub.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--g4);margin-bottom:10px"><span>Delivery fee</span><span>GH₵${DELIVERY_FEE.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-family:'Playfair Display',serif;font-size:20px;font-weight:800;border-top:1.5px solid var(--g6);padding-top:12px">
+        <span>Total</span><span style="color:var(--or)">GH₵${total.toFixed(2)}</span>
+      </div>
+    </div>`;
+}
+
+/* ── SUBMIT BOOKING ──────────────────────────────── */
+function submitBooking(){
+  // Last-second conflict guard
+  if(BS.slot && getTaken(BS.date).includes(BS.slot)){
+    toast('That slot was just taken — pick another','err');
+    toStep(2); return;
+  }
+
+  const chosen = BS.picked.map(id=>EQUIPMENT.find(e=>e.id===id));
+  const sub = chosen.reduce((s,e)=>s+e.price*BS.days, 0);
+  const total = sub + DELIVERY_FEE;
+  const ref = 'CP-'+Math.random().toString(36).substr(2,6).toUpperCase();
+
+  const booking = {
+    id: ref,
+    itemIds: [...BS.picked],
+    itemLabels: chosen.map(e=>`${e.emoji} ${e.name}`),
+    date: BS.date,
+    slot: BS.slot,
+    days: BS.days,
+    sub, total,
+    client: {...BS.client},
+    status: 'confirmed',
+    reminderSent: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  DB.bookings.unshift(booking);
+
+  // Queue reminder 24 h before booking
+  DB.reminders.push({
+    bookingId: ref,
+    name: `${BS.client.firstName} ${BS.client.lastName}`,
+    email: BS.client.email,
+    label: chosen.map(e=>e.name).join(', '),
+    date: BS.date,
+    slot: BS.slot,
+    sendAt: reminder24h(BS.date, BS.slot),
+    sent: false,
+  });
+
+  saveDB();
+  processReminders(); // auto-send any that are already past-due
+
+  // Show confirmation
+  showConfirmation(booking, ref);
+}
+
+function reminder24h(date, slot){
+  const [y,m,d] = date.split('-').map(Number);
+  const h = parseSlotHour(slot);
+  const dt = new Date(y,m-1,d,h,0,0);
+  return new Date(dt.getTime() - 86400000).toISOString();
+}
+function parseSlotHour(slot){
+  let [t,ap] = slot.split(' ');
+  let h = parseInt(t.split(':')[0]);
+  if(ap==='PM'&&h!==12) h+=12;
+  if(ap==='AM'&&h===12) h=0;
+  return h;
+}
+
+function showConfirmation(booking, ref){
+  document.getElementById('confRef').textContent = ref;
+  document.getElementById('confSub').innerHTML =
+    `Hi <strong>${booking.client.firstName}</strong>! Your booking is confirmed and saved.`;
+
+  const chosen = booking.itemIds.map(id=>EQUIPMENT.find(e=>e.id===id));
+  document.getElementById('confDetails').innerHTML =
+    chosen.map(e=>`
+      <div class="confirm-row">
+        <span class="confirm-key">${e.emoji} ${e.name}</span>
+        <span class="confirm-val">GH₵${(e.price*booking.days).toFixed(2)}</span>
+      </div>`).join('') + `
+    <div class="confirm-row">
+      <span class="confirm-key">📅 Date</span>
+      <span class="confirm-val">${fmtDate(booking.date)}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-key">🕐 Pickup</span>
+      <span class="confirm-val">${booking.slot}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-key">📦 Duration</span>
+      <span class="confirm-val">${booking.days} day${booking.days>1?'s':''}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-key">📍 Deliver to</span>
+      <span class="confirm-val">${booking.client.address}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-key">Total</span>
+      <span class="confirm-val" style="color:var(--or)">GH₵${booking.total.toFixed(2)}</span>
+    </div>`;
+
+  showView('confirm');
+  toast(`Booking confirmed! Ref: ${ref}`, 'ok');
+}
+
+function freshBooking(){
+  resetBS();
+  renderEquipment();
+  renderCal();
+  document.getElementById('slotsSection').classList.add('hidden');
+  document.getElementById('durSection').classList.add('hidden');
+  toStep(1);
+  showView('book');
+}
+
+/* ── MY BOOKINGS ─────────────────────────────────── */
+function lookupBookings(){
+  const em = document.getElementById('lookupEmail').value.trim().toLowerCase();
+  if(!em){ toast('Enter your email first','err'); return; }
+  renderMyBookings(em);
+}
+
+function renderMyBookings(filterEmail=null){
+  const list = document.getElementById('myBookingsList');
+  let rows = DB.bookings;
+  if(filterEmail) rows = rows.filter(b=>b.client.email.toLowerCase()===filterEmail);
+
+  if(!rows.length){
+    list.innerHTML = `<div class="card" style="text-align:center;padding:52px 24px">
+      <div style="font-size:42px;margin-bottom:12px">📋</div>
+      <div style="font-size:15px;font-weight:700;color:var(--bk);margin-bottom:5px">${filterEmail?'No bookings found':'Enter your email above'}</div>
+      <div style="font-size:13px;color:var(--g4)">${filterEmail?`No bookings for ${filterEmail}`:'Search to find your bookings'}</div>
+    </div>`; return;
+  }
+
+  list.innerHTML = rows.map(b=>{
+    const stBadge = b.status==='confirmed'?'badge-green':b.status==='completed'?'badge-blue':'badge-gray';
+    return `<div class="card card-hover booking-card">
+      <div class="bc-top">
+        <div>
+          <div class="bc-items">${b.itemLabels.join(' · ')}</div>
+          <div class="bc-meta">
+            📅 ${fmtDate(b.date)} &nbsp;·&nbsp; 🕐 ${b.slot}<br>
+            📦 ${b.days} day${b.days>1?'s':''} &nbsp;·&nbsp; 📍 ${b.client.address}
+          </div>
+          <span class="badge ${stBadge}" style="margin-top:8px;display:inline-flex">${b.status}</span>
+          <span class="bc-ref">${b.id}</span>
+        </div>
+        <div class="bc-right">
+          <div class="bc-price">GH₵${b.total.toFixed(2)}</div>
+          ${b.status==='confirmed'?`<button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="cancelMine('${b.id}')">Cancel</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cancelMine(id){
+  if(!confirm('Cancel this booking?')) return;
+  const b = DB.bookings.find(b=>b.id===id);
+  if(b){ b.status='cancelled'; saveDB(); renderMyBookings(); toast('Booking cancelled'); }
+}
+
+/* ── REMINDERS ───────────────────────────────────── */
+function processReminders(){
+  const now = new Date();
+  let changed = false;
+  DB.reminders.forEach(r=>{
+    if(!r.sent && new Date(r.sendAt)<=now){
+      r.sent=true; r.sentAt=new Date().toISOString();
+      const b = DB.bookings.find(b=>b.id===r.bookingId);
+      if(b) b.reminderSent=true;
+      changed=true;
+    }
+  });
+  if(changed) saveDB();
+}
+
+function sendAllPending(){
+  const pending = DB.reminders.filter(r=>!r.sent);
+  if(!pending.length){ toast('No pending reminders','ok'); return; }
+  pending.forEach(r=>{
+    r.sent=true; r.sentAt=new Date().toISOString();
+    const b=DB.bookings.find(b=>b.id===r.bookingId);
+    if(b) b.reminderSent=true;
+  });
+  saveDB();
+  toast(`${pending.length} reminder${pending.length>1?'s':''} sent!`,'ok');
+  renderReminders(); renderStats(); renderTable();
+}
+
+function sendOneReminder(bookingId){
+  const r=DB.reminders.find(r=>r.bookingId===bookingId&&!r.sent);
+  const b=DB.bookings.find(b=>b.id===bookingId);
+  if(r){r.sent=true;r.sentAt=new Date().toISOString();}
+  if(b){b.reminderSent=true;}
+  saveDB(); renderReminders(); renderTable();
+  toast(`Reminder sent to ${b?.client.email}`,'ok');
+}
+
+processReminders();
+setInterval(processReminders, 60000);
+
+/* ── ADMIN ───────────────────────────────────────── */
+let adminFilter = 'all';
+
+function initAdmin(){
+  if(adminAuthed){
+    document.getElementById('adminGate').classList.add('hidden');
+    document.getElementById('adminDash').classList.remove('hidden');
+    document.getElementById('adminDateLbl').textContent =
+      new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    renderStats(); renderReminders(); renderTable();
+  }
+}
+
+function doAdminLogin(){
+  const pw = document.getElementById('adminPwInput').value;
+  if(pw===ADMIN_PASS){
+    adminAuthed=true;
+    document.getElementById('adminPwErr').classList.remove('show');
+    initAdmin();
+  } else {
+    document.getElementById('adminPwErr').classList.add('show');
+    document.getElementById('adminPwInput').classList.add('error');
+    toast('Incorrect password','err');
+  }
+}
+
+function doAdminLogout(){
+  adminAuthed=false;
+  document.getElementById('adminGate').classList.remove('hidden');
+  document.getElementById('adminDash').classList.add('hidden');
+  document.getElementById('adminPwInput').value='';
+  document.getElementById('adminPwInput').classList.remove('error');
+  document.getElementById('adminPwErr').classList.remove('show');
+}
+
+function renderStats(){
+  const all=DB.bookings, n=new Date();
+  const todayStr=fmtISO(n.getFullYear(),n.getMonth()+1,n.getDate());
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-tile stat-orange"><div class="stat-icon">📅</div><div class="stat-num">${all.length}</div><div class="stat-lbl">Total Bookings</div></div>
+    <div class="stat-tile stat-green"><div class="stat-icon">✅</div><div class="stat-num">${all.filter(b=>b.status==='confirmed').length}</div><div class="stat-lbl">Confirmed</div></div>
+    <div class="stat-tile stat-blue"><div class="stat-icon">📆</div><div class="stat-num">${all.filter(b=>b.status==='confirmed'&&b.date>=todayStr).length}</div><div class="stat-lbl">Upcoming</div></div>
+    <div class="stat-tile stat-orange"><div class="stat-icon">💰</div><div class="stat-num">GH₵${all.filter(b=>b.status!=='cancelled').reduce((s,b)=>s+b.total,0).toFixed(0)}</div><div class="stat-lbl">Revenue</div></div>`;
+}
+
+function renderReminders(){
+  const pending = DB.reminders.filter(r=>!r.sent).sort((a,b)=>new Date(a.sendAt)-new Date(b.sendAt));
+  const el = document.getElementById('reminderRows');
+  if(!pending.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--g4);text-align:center;padding:14px">✓ No pending reminders</div>`;
+    return;
+  }
+  el.innerHTML = pending.slice(0,6).map(r=>`
+    <div class="reminder-row">
+      <span class="rr-icon">📧</span>
+      <div class="rr-body">
+        <strong>${r.name}</strong> — ${r.label}<br>
+        <span style="font-size:11.5px;color:var(--g4)">${r.email}</span>
+      </div>
+      <div class="rr-time">
+        <div>${fmtDate(r.date)}</div>
+        <div style="margin-top:2px">Due: ${new Date(r.sendAt).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="sendOneReminder('${r.bookingId}')">Send</button>
+    </div>`).join('');
+}
+
+function setFilter(f, btn){
+  adminFilter=f;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable(){
+  const q=(document.getElementById('adminSearch')?.value||'').toLowerCase();
+  let rows = DB.bookings;
+  if(adminFilter!=='all') rows=rows.filter(b=>b.status===adminFilter);
+  if(q) rows=rows.filter(b=>
+    b.id.toLowerCase().includes(q)||
+    `${b.client.firstName} ${b.client.lastName}`.toLowerCase().includes(q)||
+    b.client.email.toLowerCase().includes(q)||
+    b.itemLabels.join(' ').toLowerCase().includes(q)
+  );
+
+  const el = document.getElementById('adminTbody');
+  if(!rows.length){ el.innerHTML=`<div class="no-rows">No bookings match your filter</div>`; return; }
+
+  el.innerHTML = rows.map(b=>{
+    const sc = b.status==='confirmed'?'badge-green':b.status==='completed'?'badge-blue':b.status==='cancelled'?'badge-red':'badge-gray';
+    return `<div class="tbl-row" onclick="openDetail('${b.id}')">
+      <div class="tbl-cell">
+        <div style="font-weight:600">${b.client.firstName} ${b.client.lastName}</div>
+        <div class="tbl-sub">${b.client.email}</div>
+      </div>
+      <div class="tbl-cell">
+        <div>${b.itemLabels[0]}${b.itemLabels.length>1?` +${b.itemLabels.length-1}`:''}</div>
+        <div class="tbl-sub">${b.days} day${b.days>1?'s':''}</div>
+      </div>
+      <div class="tbl-cell">
+        <div>${fmtDate(b.date)}</div>
+        <div class="tbl-sub">${b.slot}</div>
+      </div>
+      <div class="tbl-cell" style="font-weight:700;color:var(--or)">GH₵${b.total.toFixed(2)}</div>
+      <div class="tbl-cell">
+        <span class="badge ${sc}">${b.status}</span>
+        ${b.reminderSent?'<div class="tbl-sub" style="color:var(--grn);margin-top:3px">✓ Reminded</div>':''}
+      </div>
+      <div class="tbl-actions" onclick="event.stopPropagation()">
+        ${b.status==='confirmed'?'<button class="btn btn-success btn-sm" title="Complete" onclick="event.stopPropagation();markDone(\''+b.id+'\')">✓</button><button class="btn btn-danger btn-sm" title="Cancel" onclick="event.stopPropagation();adminCancel(\''+b.id+'\')">✕</button>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDetail(id){
+  const b=DB.bookings.find(b=>b.id===id);
+  if(!b) return;
+  const sc=b.status==='confirmed'?'badge-green':b.status==='completed'?'badge-blue':b.status==='cancelled'?'badge-red':'badge-gray';
+  document.getElementById('modalBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <span style="font-family:monospace;font-size:13px;font-weight:700;color:var(--or);background:var(--or-pale);padding:4px 11px;border-radius:6px">${b.id}</span>
+      <span class="badge ${sc}">${b.status}</span>
+      ${b.reminderSent?`<span class="badge badge-blue">✉ Reminded</span>`:''}
+    </div>
+    <div class="detail-row"><span class="detail-key">Name</span><span class="detail-val">${b.client.firstName} ${b.client.lastName}</span></div>
+    <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">${b.client.email}</span></div>
+    <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">${b.client.phone||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Address</span><span class="detail-val">${b.client.address}</span></div>
+    <div class="detail-row"><span class="detail-key">Items</span><span class="detail-val">${b.itemLabels.join('<br>')}</span></div>
+    <div class="detail-row"><span class="detail-key">Date</span><span class="detail-val">${fmtDate(b.date)}</span></div>
+    <div class="detail-row"><span class="detail-key">Pickup</span><span class="detail-val">${b.slot}</span></div>
+    <div class="detail-row"><span class="detail-key">Duration</span><span class="detail-val">${b.days} day${b.days>1?'s':''}</span></div>
+    <div class="detail-row"><span class="detail-key">Total</span><span class="detail-val" style="color:var(--or);font-size:16px;font-family:'Playfair Display',serif">GH₵${b.total.toFixed(2)}</span></div>
+    <div class="detail-row"><span class="detail-key">Booked</span><span class="detail-val">${new Date(b.createdAt).toLocaleString()}</span></div>
+    ${b.client.notes?`<div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val">${b.client.notes}</span></div>`:''}
+    <div class="modal-actions">
+      ${b.status==='confirmed'?'<button class="btn btn-success btn-sm" onclick="markDone(\''+b.id+'\');closeModal()">Mark Complete</button><button class="btn btn-danger btn-sm" onclick="adminCancel(\''+b.id+'\');closeModal()">Cancel</button>':''}
+      ${!b.reminderSent&&b.status==='confirmed'?'<button class="btn btn-outline btn-sm" onclick="sendOneReminder(\''+b.id+'\')">Send Reminder</button>':''}
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('detailModal').classList.remove('open'); }
+
+function markDone(id){
+  const b=DB.bookings.find(b=>b.id===id);
+  if(b){b.status='completed';saveDB();renderStats();renderTable();toast('Marked as completed','ok');}
+}
+function adminCancel(id){
+  if(!confirm('Cancel this booking?')) return;
+  const b=DB.bookings.find(b=>b.id===id);
+  if(b){b.status='cancelled';saveDB();renderStats();renderTable();toast('Booking cancelled');}
+}
+
+/* ── CSV EXPORT ──────────────────────────────────── */
+function exportCSV(){
+  if(!DB.bookings.length){ toast('No bookings to export','err'); return; }
+  const H=['Ref','First','Last','Email','Phone','Address','Items','Date','Slot','Days','Subtotal','Total','Status','Reminder Sent','Created'];
+  const rows=DB.bookings.map(b=>[
+    b.id,b.client.firstName,b.client.lastName,b.client.email,
+    b.client.phone||'',b.client.address,
+    b.itemLabels.join(' | '),b.date,b.slot,b.days,
+    b.sub.toFixed(2),b.total.toFixed(2),b.status,
+    b.reminderSent?'Yes':'No',
+    new Date(b.createdAt).toLocaleString()
+  ]);
+  const csv=[H,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='cateringpal-'+fmtISO(...todayParts())+'.csv';
+  a.click();
+  toast('CSV exported','ok');
+}
+
+/* ── TOAST ───────────────────────────────────────── */
+function toast(msg, type='info'){
+  const shelf = document.getElementById('toastShelf');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span class="toast-dot"></span>${msg}`;
+  shelf.appendChild(t);
+  setTimeout(()=>{ t.classList.add('toast-out'); setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+/* ── HELPERS ─────────────────────────────────────── */
+function fmtISO(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function todayParts(){ const n=new Date(); return [n.getFullYear(),n.getMonth()+1,n.getDate()]; }
+function fmtDate(ds){
+  const [y,m,d]=ds.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+
+/* ── INIT ────────────────────────────────────────── */
+renderEquipment();
+renderCal();
+updateSidebar();
+</script>
+</body>
+</html>
