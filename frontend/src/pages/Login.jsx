@@ -36,7 +36,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex animate-fade-in">
       {/* Left Panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-950 via-primary-900 to-primary-800 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -45,7 +45,7 @@ export default function Login() {
         </div>
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 bg-primary-600 rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-900/50">
               <Droplets className="w-7 h-7 text-white" />
             </div>
             <div>
@@ -71,7 +71,7 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center px-8 bg-white">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
               <Droplets className="w-5 h-5 text-white" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">SDK Alkaline Water</h1>

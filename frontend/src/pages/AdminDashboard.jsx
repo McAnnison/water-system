@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import {
   DollarSign, TrendingDown, TrendingUp, Activity, Users,
   Package, Truck, Bell, Brain, AlertTriangle, CheckCircle,
-  Info, AlertCircle, Loader
+  Info, AlertCircle, Loader, Zap, Flame
 } from 'lucide-react';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-
-const CHART_COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2'];
 
 function AIInsightsPanel() {
   const [insights, setInsights] = useState(null);
@@ -40,7 +39,7 @@ function AIInsightsPanel() {
   };
 
   if (loading) return (
-    <div className="bg-white rounded-2xl border border-slate-100 p-6">
+    <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
       <div className="flex items-center gap-2 text-slate-500">
         <Loader className="w-5 h-5 animate-spin" />
         Generating AI insights...
@@ -119,19 +118,9 @@ export default function AdminDashboard() {
     </DashboardLayout>
   );
 
-  const categoryData = stats?.chartData?.length
-    ? (() => {
-        const categories = {};
-        return Object.values(categories);
-      })()
-    : [];
-
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">Real-time overview of SDK Alkaline Water operations</p>
-      </div>
+      <PageHeader title="Admin Dashboard" subtitle="Real-time overview of SDK Alkaline Water operations" />
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -189,14 +178,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Revenue Velocity Banner */}
-      <div className="mb-8 bg-gradient-to-r from-primary-950 to-primary-800 text-white p-6 rounded-2xl shadow-lg flex items-center justify-between">
-        <div>
-          <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Revenue Velocity</p>
-          <p className="text-3xl font-bold mt-1">GH₵{stats.rates.dailyRevenueRate} <span className="text-base font-normal text-primary-300">/ day</span></p>
+      <div className="mb-8 bg-gradient-to-r from-primary-950 to-primary-800 text-white p-6 rounded-2xl shadow-lg shadow-primary-900/20 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/10 rounded-xl">
+            <Zap className="w-6 h-6 text-primary-300" />
+          </div>
+          <div>
+            <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Revenue Velocity</p>
+            <p className="text-3xl font-bold mt-1">GH₵{stats.rates.dailyRevenueRate} <span className="text-base font-normal text-primary-300">/ day</span></p>
+          </div>
         </div>
         <div className="text-right">
           <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Daily Burn Rate</p>
           <p className="text-3xl font-bold mt-1">GH₵{stats.rates.dailyBurnRate} <span className="text-base font-normal text-primary-300">/ day</span></p>
+        </div>
+        <div className="hidden md:block p-3 bg-white/10 rounded-xl">
+          <Flame className="w-6 h-6 text-primary-300" />
         </div>
       </div>
 

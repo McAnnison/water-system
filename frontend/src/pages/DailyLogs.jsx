@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { ClipboardList, Lock, Unlock, Loader } from 'lucide-react';
+import PageHeader from '../components/PageHeader';
+import { Lock, Unlock, Loader } from 'lucide-react';
 
 export default function DailyLogs() {
   const [logs, setLogs] = useState([]);
@@ -35,10 +36,7 @@ export default function DailyLogs() {
 
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Daily Logs</h1>
-        <p className="text-slate-500 text-sm mt-1">View and manage all production logs</p>
-      </div>
+      <PageHeader title="Daily Logs" subtitle="View and manage all production logs" />
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">

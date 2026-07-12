@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import { Bell, Check, CheckCheck, Loader } from 'lucide-react';
 
 export default function NotificationsPage() {
@@ -55,20 +56,14 @@ export default function NotificationsPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Notifications</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            {unread > 0 ? `${unread} unread notification${unread > 1 ? 's' : ''}` : 'All caught up!'}
-          </p>
-        </div>
+      <PageHeader title="Notifications" subtitle={unread > 0 ? `${unread} unread notification${unread > 1 ? 's' : ''}` : 'All caught up!'}>
         {unread > 0 && (
           <button onClick={markAllAsRead}
             className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
             <CheckCheck className="w-4 h-4" /> Mark All Read
           </button>
         )}
-      </div>
+      </PageHeader>
 
       <div className="space-y-3">
         {notifications.map((n) => (
@@ -81,7 +76,7 @@ export default function NotificationsPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-semibold text-slate-900 text-sm">{n.title}</h3>
                   {!n.isRead && (
-                    <span className="w-2 h-2 bg-primary-600 rounded-full" />
+                    <span className="w-2 h-2 bg-primary-600 rounded-full animate-pulse-soft" />
                   )}
                 </div>
                 <p className="text-slate-600 text-sm">{n.message}</p>

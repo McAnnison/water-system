@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import {
-  DollarSign, TrendingDown, TrendingUp, Activity, Users,
-  Package, Truck, Loader, AlertCircle
+  DollarSign, TrendingDown, Activity, Users,
+  Loader, AlertCircle
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar,
@@ -40,14 +41,11 @@ export default function CEODashboard() {
 
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">CEO Overview</h1>
-        <p className="text-slate-500 text-sm mt-1">Executive summary of SDK Alkaline Water operations</p>
-      </div>
+      <PageHeader title="CEO Overview" subtitle="Executive summary of SDK Alkaline Water operations" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <StatCard title="Total Revenue" value={`GH₵${stats.summary.totalIncome.toLocaleString()}`} icon={DollarSign} color="green" description="Last 30 days" />
-        <StatCard title="Total Expenses" value={`GH₵${stats.summary.totalExpenses.toLocaleString()}`} icon={TrendingDown} color="red" />
+        <StatCard title="Total Expenses" value={`GH₵${stats.summary.totalExpenses.toLocaleString()}`} icon={TrendingDown} color="red" description="Operations & production" />
         <StatCard title="Net Profit" value={`GH₵${stats.summary.netProfit.toLocaleString()}`} icon={Activity} color="blue"
           trend={stats.summary.netProfit >= 0 ? 'Profitable' : 'Deficit'}
           trendType={stats.summary.netProfit >= 0 ? 'up' : 'down'}
@@ -55,26 +53,26 @@ export default function CEODashboard() {
         <StatCard title="Team Size" value={stats.summary.totalUsers} icon={Users} color="purple" description={`${stats.summary.activeUsers} active`} />
       </div>
 
-      <div className="mb-8 bg-gradient-to-r from-indigo-900 to-violet-800 text-white p-6 rounded-2xl shadow-lg grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="mb-8 bg-gradient-to-r from-primary-950 to-indigo-900 text-white p-6 rounded-2xl shadow-lg shadow-primary-900/20 grid grid-cols-2 md:grid-cols-4 gap-6">
         <div>
-          <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wider">Revenue Rate</p>
+          <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Revenue Rate</p>
           <p className="text-2xl font-bold mt-1">GH₵{stats.rates.dailyRevenueRate}</p>
-          <p className="text-indigo-300 text-xs">per day</p>
+          <p className="text-primary-300 text-xs">per day</p>
         </div>
         <div>
-          <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wider">Burn Rate</p>
+          <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Burn Rate</p>
           <p className="text-2xl font-bold mt-1">GH₵{stats.rates.dailyBurnRate}</p>
-          <p className="text-indigo-300 text-xs">per day</p>
+          <p className="text-primary-300 text-xs">per day</p>
         </div>
         <div>
-          <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wider">Production</p>
+          <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Production</p>
           <p className="text-2xl font-bold mt-1">{stats.summary.totalProduction}</p>
-          <p className="text-indigo-300 text-xs">units this week</p>
+          <p className="text-primary-300 text-xs">units this week</p>
         </div>
         <div>
-          <p className="text-indigo-200 text-xs font-semibold uppercase tracking-wider">Dispatched</p>
+          <p className="text-primary-300 text-xs font-semibold uppercase tracking-wider">Dispatched</p>
           <p className="text-2xl font-bold mt-1">{stats.summary.totalDispatch}</p>
-          <p className="text-indigo-300 text-xs">units this week</p>
+          <p className="text-primary-300 text-xs">units this week</p>
         </div>
       </div>
 

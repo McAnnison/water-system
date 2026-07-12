@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Users, Plus, Loader, AlertCircle, UserPlus } from 'lucide-react';
+import PageHeader from '../components/PageHeader';
+import { Users, Loader, AlertCircle, UserPlus, X } from 'lucide-react';
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -55,16 +56,13 @@ export default function UsersPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage team members and access roles</p>
-        </div>
+      <PageHeader title="User Management" subtitle="Manage team members and access roles">
         <button onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
-          <UserPlus className="w-4 h-4" /> Add User
+          {showForm ? <X className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+          {showForm ? 'Close' : 'Add User'}
         </button>
-      </div>
+      </PageHeader>
 
       {message && (
         <div className={`flex items-center gap-2 p-3 rounded-xl mb-6 text-sm ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
@@ -137,7 +135,7 @@ export default function UsersPage() {
                 <tr key={u.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 text-primary-700 flex items-center justify-center text-xs font-bold">
                         {u.name?.charAt(0) || 'U'}
                       </div>
                       <span className="text-sm font-medium text-slate-900">{u.name || 'N/A'}</span>
