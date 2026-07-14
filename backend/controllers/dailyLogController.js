@@ -1,6 +1,9 @@
 const prisma = require('../lib/prisma');
 const { notifyAdmin } = require('../services/notificationService');
 
+const isInvalidQuantity = (value) =>
+  value !== undefined && (!Number.isInteger(value) || value < 0);
+
 // @desc    Get all daily logs
 // @route   GET /api/logs
 const getDailyLogs = async (req, res) => {
@@ -13,7 +16,8 @@ const getDailyLogs = async (req, res) => {
     });
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -21,6 +25,10 @@ const getDailyLogs = async (req, res) => {
 // @route   POST /api/logs
 const createDailyLog = async (req, res) => {
   const { openingStock, production, dispatch } = req.body;
+
+  if ([openingStock, production, dispatch].some(isInvalidQuantity)) {
+    return res.status(400).json({ message: 'Stock values must be non-negative integers' });
+  }
 
   try {
     const totalInStock = (openingStock || 0) + (production || 0);
@@ -52,7 +60,8 @@ const createDailyLog = async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ message: 'A log entry for today already exists' });
     }
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -61,6 +70,10 @@ const createDailyLog = async (req, res) => {
 const updateDailyLog = async (req, res) => {
   const { id } = req.params;
   const { openingStock, production, dispatch } = req.body;
+
+  if ([openingStock, production, dispatch].some(isInvalidQuantity)) {
+    return res.status(400).json({ message: 'Stock values must be non-negative integers' });
+  }
 
   try {
     const existing = await prisma.dailyLog.findUnique({ where: { id } });
@@ -90,7 +103,8 @@ const updateDailyLog = async (req, res) => {
 
     res.json(log);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -122,7 +136,8 @@ const toggleLockLog = async (req, res) => {
 
     res.json(log);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -171,7 +186,8 @@ const getProductionStats = async (req, res) => {
       recentLogs: weeklyLogs.reverse()
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
