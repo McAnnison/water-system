@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
-import { Truck, Package, ClipboardList, Loader, AlertCircle } from 'lucide-react';
+import { Truck, Package, ClipboardList, Loader } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function FieldManagerDashboard() {
@@ -26,7 +27,6 @@ export default function FieldManagerDashboard() {
 
   const recentLogs = logs.slice(0, 14);
   const totalDispatch = recentLogs.reduce((sum, l) => sum + l.dispatch, 0);
-  const totalProduction = recentLogs.reduce((sum, l) => sum + l.production, 0);
   const currentStock = logs[0]?.remainingStock || 0;
 
   const chartData = recentLogs.map(l => ({
@@ -37,10 +37,7 @@ export default function FieldManagerDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Field Manager Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">Distribution and dispatch tracking</p>
-      </div>
+      <PageHeader title="Field Manager Dashboard" subtitle="Distribution and dispatch tracking" />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <StatCard title="Recent Dispatch" value={`${totalDispatch} units`} icon={Truck} color="green" description="Last 14 entries" />

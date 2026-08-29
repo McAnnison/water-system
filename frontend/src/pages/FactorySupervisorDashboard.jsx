@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import {
-  Factory, Package, Truck, BarChart3, TrendingUp,
-  AlertCircle, Loader, CheckCircle
+  Factory, Package, Truck, TrendingUp,
+  AlertCircle, Loader
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 
 export default function FactorySupervisorDashboard() {
@@ -42,12 +43,16 @@ export default function FactorySupervisorDashboard() {
     </DashboardLayout>
   );
 
+  const avgDailyProduction = stats.productionChart.length > 0
+    ? Math.round(stats.monthly.production / stats.productionChart.length)
+    : 0;
+  const overallEfficiency = stats.monthly.production > 0
+    ? (stats.monthly.dispatch / stats.monthly.production * 100).toFixed(1)
+    : 0;
+
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Factory Supervisor Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">Production monitoring and inventory management</p>
-      </div>
+      <PageHeader title="Factory Supervisor Dashboard" subtitle="Production monitoring and inventory management" />
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -84,7 +89,7 @@ export default function FactorySupervisorDashboard() {
       </div>
 
       {/* Monthly Stats Banner */}
-      <div className="mb-8 bg-gradient-to-r from-emerald-800 to-teal-700 text-white p-6 rounded-2xl shadow-lg grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="mb-8 bg-gradient-to-r from-emerald-800 to-teal-700 text-white p-6 rounded-2xl shadow-lg shadow-emerald-900/20 grid grid-cols-2 md:grid-cols-4 gap-6">
         <div>
           <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wider">Monthly Production</p>
           <p className="text-2xl font-bold mt-1">{stats.monthly.production}</p>
@@ -97,12 +102,12 @@ export default function FactorySupervisorDashboard() {
         </div>
         <div>
           <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wider">Avg Daily Production</p>
-          <p className="text-2xl font-bold mt-1">{stats.productionChart.length > 0 ? Math.round(stats.monthly.production / stats.productionChart.length) : 0}</p>
+          <p className="text-2xl font-bold mt-1">{avgDailyProduction}</p>
           <p className="text-emerald-300 text-xs">units/day</p>
         </div>
         <div>
           <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wider">Overall Efficiency</p>
-          <p className="text-2xl font-bold mt-1">{stats.monthly.production > 0 ? (stats.monthly.dispatch / stats.monthly.production * 100).toFixed(1) : 0}%</p>
+          <p className="text-2xl font-bold mt-1">{overallEfficiency}%</p>
           <p className="text-emerald-300 text-xs">dispatch rate</p>
         </div>
       </div>

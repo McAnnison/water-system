@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { DollarSign, Plus, Loader, AlertCircle } from 'lucide-react';
+import PageHeader from '../components/PageHeader';
+import { DollarSign, Plus, Loader, AlertCircle, X } from 'lucide-react';
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -47,16 +48,13 @@ export default function Transactions() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Transactions</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage income and expense records</p>
-        </div>
+      <PageHeader title="Transactions" subtitle="Manage income and expense records">
         <button onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
-          <Plus className="w-4 h-4" /> New Transaction
+          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showForm ? 'Close' : 'New Transaction'}
         </button>
-      </div>
+      </PageHeader>
 
       {message && (
         <div className={`flex items-center gap-2 p-3 rounded-xl mb-6 text-sm ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>

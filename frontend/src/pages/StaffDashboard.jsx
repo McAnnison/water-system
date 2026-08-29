@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
+import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import { ClipboardList, Package, Loader, AlertCircle, Plus } from 'lucide-react';
 
@@ -54,18 +55,14 @@ export default function StaffDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Staff Dashboard</h1>
-          <p className="text-slate-500 text-sm mt-1">Submit and view daily production logs</p>
-        </div>
+      <PageHeader title="Staff Dashboard" subtitle="Submit and view daily production logs">
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30"
         >
           <Plus className="w-4 h-4" /> New Log Entry
         </button>
-      </div>
+      </PageHeader>
 
       {message && (
         <div className={`flex items-center gap-2 p-3 rounded-xl mb-6 text-sm ${
