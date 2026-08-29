@@ -3,14 +3,32 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
 const { notifyAdmin } = require('../services/notificationService');
 
+const VALID_ROLES = ['CEO', 'FIELD_MANAGER', 'FACTORY_SUPERVISOR', 'STAFF', 'ADMIN'];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '1d'
+  });
 };
 
 // @desc    Register a new user (CEO Only)
 // @route   POST /api/auth/register
 const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required' });
+  }
+  if (!EMAIL_REGEX.test(email)) {
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+  }
+  if (role && !VALID_ROLES.includes(role)) {
+    return res.status(400).json({ message: 'Invalid role' });
+  }
 
   try {
     const userExists = await prisma.user.findUnique({ where: { email } });
@@ -41,7 +59,8 @@ const registerUser = async (req, res) => {
       role: user.role
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -49,6 +68,10 @@ const registerUser = async (req, res) => {
 // @route   POST /api/auth/login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -77,7 +100,8 @@ const loginUser = async (req, res) => {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -99,7 +123,8 @@ const getUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

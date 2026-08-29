@@ -91,7 +91,8 @@ const getDashboardStats = async (req, res) => {
       productionChartData
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -265,7 +266,8 @@ const getAIInsights = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -290,7 +292,8 @@ const getTransactions = async (req, res) => {
     });
     res.json(transactions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -303,11 +306,18 @@ const createTransaction = async (req, res) => {
     if (!type || !amount || !category) {
       return res.status(400).json({ message: 'Type, amount, and category are required' });
     }
+    if (!['INCOME', 'EXPENSE'].includes(type)) {
+      return res.status(400).json({ message: 'Type must be INCOME or EXPENSE' });
+    }
+    const parsedAmount = parseFloat(amount);
+    if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
+      return res.status(400).json({ message: 'Amount must be a positive number' });
+    }
 
     const transaction = await prisma.transaction.create({
       data: {
         type,
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         category,
         description,
         adminId: req.user.id
@@ -324,7 +334,8 @@ const createTransaction = async (req, res) => {
 
     res.status(201).json(transaction);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
