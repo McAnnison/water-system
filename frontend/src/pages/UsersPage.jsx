@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { Users, Plus, Loader, AlertCircle, UserPlus } from 'lucide-react';
 
 export default function UsersPage() {
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -95,7 +97,7 @@ export default function UsersPage() {
               <input type="password" value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-slate-50 focus:bg-white"
-                placeholder="Minimum 6 characters" required minLength="6" />
+                placeholder="Minimum 8 characters" required minLength="8" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
@@ -104,7 +106,7 @@ export default function UsersPage() {
                 <option value="STAFF">Staff</option>
                 <option value="FACTORY_SUPERVISOR">Factory Supervisor</option>
                 <option value="FIELD_MANAGER">Field Manager</option>
-                <option value="ADMIN">Administrator</option>
+                {user?.role === 'CEO' && <option value="ADMIN">Administrator</option>}
               </select>
             </div>
             <div className="md:col-span-2 flex justify-end gap-3">

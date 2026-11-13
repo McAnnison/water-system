@@ -21,6 +21,15 @@ describe('POST /api/auth/login', () => {
     expect(res.body.message).toMatch(/invalid email or password/i);
   });
 
+  it('returns 401 for inactive accounts', async () => {
+    const hashed = await bcrypt.hash('correct-password', 10);
+    prismaMock.user.findUnique.mockResolvedValueOnce({ ...users.admin, isActive: false, password: hashed });
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: users.admin.email, password: 'correct-password' });
+    expect(res.status).toBe(401);
+  });
+
   it('returns 401 for wrong password', async () => {
     const hashed = await bcrypt.hash('correct-password', 10);
     prismaMock.user.findUnique.mockResolvedValueOnce({ ...users.admin, password: hashed });
@@ -116,7 +125,7 @@ describe('POST /api/auth/register', () => {
       .post('/api/auth/register')
       .set(headers)
       .send({ name: 'X', email: users.staff.email, password: 'password123', role: 'STAFF' });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(409);
     expect(res.body.message).toMatch(/already exists/i);
   });
 
@@ -145,7 +154,15 @@ describe('GET /api/auth/users', () => {
       .get('/api/auth/users')
       .set('Authorization', `Bearer ${tokenFor(users.admin)}`);
     expect(res.status).toBe(401);
-    expect(res.body.message).toMatch(/user not found/i);
+    expect(res.body.message).toMatch(/account unavailable/i);
+  });
+
+  it('rejects requests from users deactivated after login', async () => {
+    prismaMock.user.findUnique.mockResolvedValueOnce({ ...users.admin, isActive: false });
+    const res = await request(app)
+      .get('/api/auth/users')
+      .set('Authorization', `Bearer ${tokenFor(users.admin)}`);
+    expect(res.status).toBe(401);
   });
 
   it('returns the user list for admins', async () => {

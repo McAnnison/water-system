@@ -30,16 +30,20 @@ const createDailyLog = async (req, res) => {
     return res.status(400).json({ message: 'Stock values must be non-negative integers' });
   }
 
-  try {
-    const totalInStock = (openingStock || 0) + (production || 0);
-    const remainingStock = totalInStock - (dispatch || 0);
+  const totalInStock = (openingStock ?? 0) + (production ?? 0);
+  const dispatchQuantity = dispatch ?? 0;
+  if (dispatchQuantity > totalInStock) {
+    return res.status(400).json({ message: 'Dispatch cannot exceed opening stock plus production' });
+  }
 
+  try {
+    const remainingStock = totalInStock - dispatchQuantity;
     const log = await prisma.dailyLog.create({
       data: {
-        openingStock: openingStock || 0,
-        production: production || 0,
+        openingStock: openingStock ?? 0,
+        production: production ?? 0,
         totalInStock,
-        dispatch: dispatch || 0,
+        dispatch: dispatchQuantity,
         remainingStock,
         staffId: req.user.id
       },
@@ -50,7 +54,7 @@ const createDailyLog = async (req, res) => {
 
     await notifyAdmin(
       'New Daily Log Entry',
-      `${req.user.name || req.user.email} submitted a daily log: Production: ${production}, Dispatch: ${dispatch}, Remaining: ${remainingStock}.`,
+      `${req.user.name || req.user.email} submitted a daily log: Production: ${production ?? 0}, Dispatch: ${dispatchQuantity}, Remaining: ${remainingStock}.`,
       'LOG_CREATED',
       req.user.id
     );
@@ -58,7 +62,7 @@ const createDailyLog = async (req, res) => {
     res.status(201).json(log);
   } catch (error) {
     if (error.code === 'P2002') {
-      return res.status(400).json({ message: 'A log entry for today already exists' });
+      return res.status(400).json({ message: 'A log entry for this date already exists' });
     }
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -80,16 +84,23 @@ const updateDailyLog = async (req, res) => {
     if (!existing) return res.status(404).json({ message: 'Log not found' });
     if (existing.isLocked) return res.status(403).json({ message: 'Log is locked and cannot be modified' });
 
-    const totalInStock = (openingStock ?? existing.openingStock) + (production ?? existing.production);
-    const remainingStock = totalInStock - (dispatch ?? existing.dispatch);
+    const nextOpeningStock = openingStock ?? existing.openingStock;
+    const nextProduction = production ?? existing.production;
+    const nextDispatch = dispatch ?? existing.dispatch;
+    const totalInStock = nextOpeningStock + nextProduction;
 
+    if (nextDispatch > totalInStock) {
+      return res.status(400).json({ message: 'Dispatch cannot exceed opening stock plus production' });
+    }
+
+    const remainingStock = totalInStock - nextDispatch;
     const log = await prisma.dailyLog.update({
       where: { id },
       data: {
-        openingStock: openingStock ?? existing.openingStock,
-        production: production ?? existing.production,
+        openingStock: nextOpeningStock,
+        production: nextProduction,
         totalInStock,
-        dispatch: dispatch ?? existing.dispatch,
+        dispatch: nextDispatch,
         remainingStock
       }
     });
