@@ -28,11 +28,11 @@ const prismaMock = {
 };
 
 const users = {
-  ceo: { id: 'user-ceo', name: 'CEO User', email: 'ceo@sdkwater.com', role: 'CEO' },
-  admin: { id: 'user-admin', name: 'Admin User', email: 'admin@sdkwater.com', role: 'ADMIN' },
-  supervisor: { id: 'user-sup', name: 'Supervisor', email: 'supervisor@sdkwater.com', role: 'FACTORY_SUPERVISOR' },
-  staff: { id: 'user-staff', name: 'Staff User', email: 'staff@sdkwater.com', role: 'STAFF' },
-  field: { id: 'user-field', name: 'Field Manager', email: 'field@sdkwater.com', role: 'FIELD_MANAGER' }
+  ceo: { id: 'user-ceo', name: 'CEO User', email: 'ceo@sdkwater.com', role: 'CEO', isActive: true },
+  admin: { id: 'user-admin', name: 'Admin User', email: 'admin@sdkwater.com', role: 'ADMIN', isActive: true },
+  supervisor: { id: 'user-sup', name: 'Supervisor', email: 'supervisor@sdkwater.com', role: 'FACTORY_SUPERVISOR', isActive: true },
+  staff: { id: 'user-staff', name: 'Staff User', email: 'staff@sdkwater.com', role: 'STAFF', isActive: true },
+  field: { id: 'user-field', name: 'Field Manager', email: 'field@sdkwater.com', role: 'FIELD_MANAGER', isActive: true }
 };
 
 const tokenFor = (user) => jwt.sign({ id: user.id }, process.env.JWT_SECRET);
