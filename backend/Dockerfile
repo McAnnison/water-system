@@ -3,7 +3,8 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+# Prisma CLI is currently a devDependency, and is required for generate/migrate.
+RUN npm ci
 
 COPY prisma ./prisma
 RUN npx prisma generate --schema=prisma/schema.prisma
